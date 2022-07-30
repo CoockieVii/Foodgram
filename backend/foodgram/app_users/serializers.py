@@ -1,12 +1,21 @@
 from rest_framework import serializers
 
-from app_core.mixin import ValidateMixin
+from app_core.validaters import ValidateUser
 from .models import User
 
 
-class UserSerializer(ValidateMixin, serializers.ModelSerializer):
-    """Сериализатор пользователя."""
+class UserSerializer(ValidateUser, serializers.ModelSerializer):
     class Meta:
+        model = User
         fields = ('email', 'username', 'first_name',
                   'last_name', 'password')
-        model = User
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def create(self, validated_data):
+        user = User(
+            email=validated_data['email'],
+            username=validated_data['username']
+        )
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
