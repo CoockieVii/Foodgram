@@ -1,14 +1,16 @@
 from rest_framework import serializers
 
-from app_core.validaters import ValidateUser
-from .models import User
+from app_core.validaters import ValidateUser, ValidateFollow
+from .models import User, Subscription
 
 
 class UserSerializer(ValidateUser, serializers.ModelSerializer):
+    is_subscribed = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = ('email', 'username', 'first_name',
-                  'last_name', 'password')
+                  'last_name', 'password', 'is_subscribed')
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
@@ -19,3 +21,37 @@ class UserSerializer(ValidateUser, serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+
+    def get_is_subscribed(self, obj):
+        user = self.context.get('request').user
+        author = obj
+        return Subscription.objects.filter(
+            user=user,
+            author=author
+        ).exists()
+
+
+class FollowSerializer(ValidateFollow, serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(
+        slug_field='username',
+        queryset=User.objects.all()
+    )
+    user = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='username',
+        default=serializers.CurrentUserDefault()
+    )
+
+    class Meta:
+        model = Subscription
+        fields = (
+            'user',
+            'author'
+        )
+
+        validators = [
+            serializers.UniqueTogetherValidator(
+                queryset=Subscription.objects.all(),
+                fields=('user', 'author')
+            )
+        ]

@@ -12,3 +12,11 @@ class ValidateUser(object):
         if re.match(r'^[\w.@+-]+\Z', username) is None:
             raise serializers.ValidationError(text + username)
         return username
+
+
+class ValidateFollow(object):
+    def validate_following(self, following):
+        if self.context['request'].user == following:
+            raise serializers.ValidationError(
+                'Подписка на самого себя запрещена!.')
+        return following
