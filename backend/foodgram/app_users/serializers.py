@@ -25,29 +25,13 @@ class UserSerializer(ValidateUser, serializers.ModelSerializer):
     def get_is_subscribed(self, obj):
         user = self.context.get('request').user
         author = obj
-        return Subscription.objects.filter(
-            user=user,
-            author=author
-        ).exists()
+        return Subscription.objects.filter(user=user, author=author).exists()
 
 
-class FollowSerializer(ValidateFollow, serializers.ModelSerializer):
-    author = serializers.SlugRelatedField(
-        slug_field='username',
-        queryset=User.objects.all()
-    )
-    user = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='username',
-        default=serializers.CurrentUserDefault()
-    )
-
+class SubscriptionSerializer(ValidateFollow, serializers.ModelSerializer):
     class Meta:
         model = Subscription
-        fields = (
-            'user',
-            'author'
-        )
+        fields = ('user', 'author')
 
         validators = [
             serializers.UniqueTogetherValidator(

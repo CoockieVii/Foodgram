@@ -1,8 +1,9 @@
-from rest_framework import viewsets, filters, mixins
-from rest_framework.viewsets import GenericViewSet
+from rest_framework import viewsets, status, views
+from rest_framework.generics import get_object_or_404
+from rest_framework.response import Response
 
-from .models import User
-from .serializers import UserSerializer, FollowSerializer
+from .models import User, Subscription
+from .serializers import UserSerializer, SubscriptionSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -11,18 +12,31 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
 
-class FollowViewSet(mixins.CreateModelMixin,
-                    mixins.ListModelMixin,
-                    mixins.DestroyModelMixin,
-                    GenericViewSet):
-    """Подписки."""
-    serializer_class = FollowSerializer
-    filter_backends = (filters.SearchFilter, )
-    search_fields = ('=user__username', '=author__username')
+class SubscriptionViewSet(views.APIView):
+    """Подписки пользователей"""
 
-    def get_queryset(self):
+    def get(self, request, pk):
+        """Просмотр подписок пользователя."""
+        author = get_object_or_404(User, id=pk)
+        follows_author = author.subscriber.all()
+        serializer = SubscriptionSerializer(follows_author, many=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, pk):
+        """Создание подписок."""
         user = self.request.user
-        return user.follower.all()
+        author = get_object_or_404(User, id=pk)
+        data = {'user': user.id, 'author': author.id}
+        serializer = SubscriptionSerializer(
+            data=data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+    def delete(self, request, pk):
+        """Удаление подписки."""
+        author = get_object_or_404(User, id=pk)
+        get_object_or_404(Subscription,
+                          user=self.request.user,
+                          author=author).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
