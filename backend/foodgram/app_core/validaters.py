@@ -1,6 +1,8 @@
 import re
 
-from rest_framework import serializers
+from rest_framework import serializers, status
+
+from app_users.models import Subscription
 
 
 class ValidateUser(object):
@@ -14,9 +16,12 @@ class ValidateUser(object):
         return username
 
 
-class ValidateFollow(object):
-    def validate_following(self, following):
-        if self.context['request'].user == following:
-            raise serializers.ValidationError(
-                'Подписка на самого себя запрещена!.')
-        return following
+def validate_subscription(author, user):
+    if author == user:
+        result = {'data': 'Нельзя подписываться на самого себя',
+                  'status': status.HTTP_400_BAD_REQUEST}
+        return result
+    if Subscription.objects.filter(user=user, author=author).exists():
+        result = {'data': 'Подписка уже оформлена',
+                  'status': status.HTTP_400_BAD_REQUEST}
+        return result

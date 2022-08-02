@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'app_foodgram',
     'app_core',
     'app_users',
+    'app_tags'
 ]
 
 MIDDLEWARE = [

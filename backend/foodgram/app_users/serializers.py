@@ -1,10 +1,11 @@
 from rest_framework import serializers
 
-from app_core.validaters import ValidateUser, ValidateFollow
-from .models import User, Subscription
+from app_core.mixins import AttributesForUser, AttributesForSubscription
+from app_core.validaters import ValidateUser
+from .models import User
 
 
-class UserSerializer(ValidateUser, serializers.ModelSerializer):
+class UserSerializer(ValidateUser, AttributesForUser, serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
@@ -22,20 +23,17 @@ class UserSerializer(ValidateUser, serializers.ModelSerializer):
         user.save()
         return user
 
-    def get_is_subscribed(self, obj):
-        user = self.context.get('request').user
-        author = obj
-        return Subscription.objects.filter(user=user, author=author).exists()
 
+class SubscriptionSerializer(AttributesForSubscription,
+                             serializers.ModelSerializer):
+    is_subscribed = serializers.SerializerMethodField()
 
-class SubscriptionSerializer(ValidateFollow, serializers.ModelSerializer):
+    # recipes_count = serializers.SerializerMethodField()
+    # recipes = serializers.SerializerMethodField()
+
     class Meta:
-        model = Subscription
-        fields = ('user', 'author')
-
-        validators = [
-            serializers.UniqueTogetherValidator(
-                queryset=Subscription.objects.all(),
-                fields=('user', 'author')
-            )
-        ]
+        model = User
+        fields = ('email', 'id', 'username', 'first_name',
+                  'last_name', 'is_subscribed',
+                  # 'recipes', 'recipes_count'
+                  )

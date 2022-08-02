@@ -1,7 +1,10 @@
-from rest_framework import viewsets, status, views
+from django.shortcuts import get_list_or_404
+from rest_framework import viewsets, status, permissions, mixins
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
+from rest_framework.viewsets import GenericViewSet
 
+from app_core.validaters import validate_subscription
 from .models import User, Subscription
 from .serializers import UserSerializer, SubscriptionSerializer
 
@@ -12,31 +15,34 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
 
-class SubscriptionViewSet(views.APIView):
-    """Подписки пользователей"""
+class SubscriptionViewSet(mixins.CreateModelMixin,
+                          mixins.DestroyModelMixin,
+                          mixins.ListModelMixin,
+                          GenericViewSet):
+    serializer_class = SubscriptionSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
-    def get(self, request, pk):
-        """Просмотр подписок пользователя."""
-        author = get_object_or_404(User, id=pk)
-        follows_author = author.subscriber.all()
-        serializer = SubscriptionSerializer(follows_author, many=True)
-        return Response(data=serializer.data, status=status.HTTP_200_OK)
-
-    def post(self, request, pk):
+    def create(self, request, *args, **kwargs):
         """Создание подписок."""
-        user = self.request.user
-        author = get_object_or_404(User, id=pk)
-        data = {'user': user.id, 'author': author.id}
-        serializer = SubscriptionSerializer(
-            data=data, context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        author_id = self.kwargs.get('users_id')
+        author = get_object_or_404(User, id=author_id)
+        validate = validate_subscription(author, request.user)
+        if validate:
+            return Response(data=validate['data'], status=validate['status'])
+        if Subscription.objects.create(
+                user=request.user,
+                author=author):
+            return Response(status=status.HTTP_201_CREATED)
 
-    def delete(self, request, pk):
+    def delete(self, request, *args, **kwargs):
         """Удаление подписки."""
-        author = get_object_or_404(User, id=pk)
-        get_object_or_404(Subscription,
-                          user=self.request.user,
-                          author=author).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        author_id = self.kwargs['users_id']
+        user_id = request.user.id
+        if get_object_or_404(
+                Subscription,
+                user__id=user_id,
+                author__id=author_id).delete():
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def get_queryset(self):
+        return get_list_or_404(User, subscriber__user=self.request.user)
