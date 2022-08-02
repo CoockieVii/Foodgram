@@ -25,3 +25,10 @@ def validate_subscription(author, user):
         result = {'data': 'Подписка уже оформлена',
                   'status': status.HTTP_400_BAD_REQUEST}
         return result
+
+
+class ValidateTags(object):
+    def validate_tags(self, tags):
+        text = ' -содержит недопустимые символы.'
+        if re.match(r'^[-a-zA-Z0-9_]+$', tags) is None:
+            raise serializers.ValidationError(tags + text)

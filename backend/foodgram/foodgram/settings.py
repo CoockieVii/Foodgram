@@ -32,10 +32,11 @@ INSTALLED_APPS = [
     'django_filters',
 
     'app_api',
-    'app_foodgram',
     'app_core',
     'app_users',
-    'app_tags'
+    'app_tags',
+    'app_recipes',
+    'app_ingredients',
 ]
 
 MIDDLEWARE = [
