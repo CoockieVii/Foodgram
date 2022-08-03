@@ -12,7 +12,7 @@ class UserAdmin(admin.ModelAdmin):
 
 
 @admin.register(Subscription)
-class FollowAdmin(admin.ModelAdmin):
+class SubscriptionAdmin(admin.ModelAdmin):
     list_display = ('user', 'author', 'created')
     actions_on_bottom = True
     list_filter = ('user',)

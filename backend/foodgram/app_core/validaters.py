@@ -32,3 +32,4 @@ class ValidateTags(object):
         text = ' -содержит недопустимые символы.'
         if re.match(r'^[-a-zA-Z0-9_]+$', tags) is None:
             raise serializers.ValidationError(tags + text)
+
