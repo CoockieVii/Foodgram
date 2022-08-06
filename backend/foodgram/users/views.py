@@ -5,7 +5,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
-from app_core.validaters import validate_subscription
+from core.validaters import validate_subscription
 from .models import User, Subscription
 from .serializers import CreateUserSerializer
 from .serializers import SubscriptionSerializer

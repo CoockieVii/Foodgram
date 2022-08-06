@@ -1,7 +1,7 @@
-from app_recipes.models import (ShoppingCart, RecipeTag, Favorite, Recipe,
-                                RecipeIngredientRelations)
-from app_users.models import Subscription
-from app_recipes import serializers
+from recipes.models import (ShoppingCart, RecipeTag, Favorite, Recipe,
+                            RecipeIngredientRelations)
+from users.models import Subscription
+from recipes import serializers
 
 
 class GetRecipesCount:

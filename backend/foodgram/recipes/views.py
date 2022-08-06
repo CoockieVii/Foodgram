@@ -7,15 +7,15 @@ from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
-from app_core.filters import RecipeFilter
-from app_core.permissions import AuthorOrReadOnly
-from app_core.validaters import ValidateTags
-from app_recipes.models import Favorite
-from app_recipes.models import Recipe
-from app_recipes.models import RecipeIngredientRelations
-from app_recipes.models import ShoppingCart
-from app_recipes.serializers import RecipeSerializer
-from app_recipes.serializers import SimpleRecipeSerializer
+from core.filters import RecipeFilter
+from core.permissions import AuthorOrReadOnly
+from core.validaters import ValidateTags
+from recipes.models import Favorite
+from recipes.models import Recipe
+from recipes.models import RecipeIngredientRelations
+from recipes.models import ShoppingCart
+from recipes.serializers import RecipeSerializer
+from recipes.serializers import SimpleRecipeSerializer
 
 
 def custom_adder(model, user, pk):

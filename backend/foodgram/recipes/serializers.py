@@ -2,13 +2,13 @@ from drf_base64.fields import Base64ImageField
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
-from app_core.mixins import AttributesForRecipe
-from app_core.validaters import validate_tags
-from app_ingredients.models import Ingredient
-from app_recipes.models import Recipe, RecipeIngredientRelations
-from app_tags.models import Tag
-from app_tags.serializers import TagSerializer
-from app_users.serializers import UserSerializer
+from core.mixins import AttributesForRecipe
+from core.validaters import validate_tags
+from ingredients.models import Ingredient
+from recipes.models import Recipe, RecipeIngredientRelations
+from tags.models import Tag
+from tags.serializers import TagSerializer
+from users.serializers import UserSerializer
 
 
 class RecipeIngredientRelationsSerializer(serializers.ModelSerializer):

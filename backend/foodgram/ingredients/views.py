@@ -1,8 +1,8 @@
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.permissions import AllowAny
 
-from app_ingredients.models import Ingredient
-from app_ingredients.serializers import IngredientSerializer
+from ingredients.models import Ingredient
+from ingredients.serializers import IngredientSerializer
 
 
 class IngredientViewSet(ReadOnlyModelViewSet):

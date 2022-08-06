@@ -1,10 +1,10 @@
 from django.contrib import admin
 
-from app_recipes.models import Favorite
-from app_recipes.models import Recipe
-from app_recipes.models import RecipeIngredientRelations
-from app_recipes.models import RecipeTag
-from app_recipes.models import ShoppingCart
+from recipes.models import Favorite
+from recipes.models import Recipe
+from recipes.models import RecipeIngredientRelations
+from recipes.models import RecipeTag
+from recipes.models import ShoppingCart
 
 
 class RecipeIngredientRelationsInline(admin.TabularInline):

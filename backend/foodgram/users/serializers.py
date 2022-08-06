@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from app_core.mixins import AttributesForUser, AttributesForSubscription
-from app_core.validaters import ValidateUser
+from core.mixins import AttributesForUser, AttributesForSubscription
+from core.validaters import ValidateUser
 from djoser.serializers import UserCreateSerializer
 
 from .models import User

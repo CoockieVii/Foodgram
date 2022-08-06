@@ -2,8 +2,8 @@ import re
 from rest_framework import serializers, status
 from rest_framework.response import Response
 
-from app_tags.models import Tag
-from app_users.models import Subscription
+from tags.models import Tag
+from users.models import Subscription
 
 
 class ValidateUser(object):
