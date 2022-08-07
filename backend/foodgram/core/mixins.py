@@ -48,7 +48,7 @@ class GetTags:
 
 
 class GetShoppingCart:
-    def get_is_in_shopping_cart(self, obj):
+    def get_is_shopping_cart(self, obj):
         user_id = self.context.get('request').user.id
         return ShoppingCart.objects.filter(
             user=user_id, recipe=obj.id).exists()

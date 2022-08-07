@@ -1,6 +1,5 @@
 import re
 from rest_framework import serializers, status
-from rest_framework.response import Response
 
 from tags.models import Tag
 from users.models import Subscription
@@ -35,12 +34,23 @@ class ValidateTags(object):
 
 
 def validate_tags(data):
-    """Валидация тэгов: отсутствие в request, отсутствие в БД."""
     if not data:
-        raise Response({'tags': ['Обязательное поле.']})
+        raise serializers.ValidationError({f'tags': ['Обязательное поле.']})
+    if len(data) != len(set(data)):
+        raise serializers.ValidationError(
+            {'tags': ['Выбранные теги не должны повторяться.']})
     if len(data) < 1:
-        raise Response({'tags': ['Хотя бы один тэг должен быть указан.']})
+        raise serializers.ValidationError(
+            {'tags': ['Хотя бы один тэг должен быть указан.']})
     for tag in data:
         if not Tag.objects.filter(id=tag).exists():
-            raise Response({'tags': ['Тэг отсутствует в БД.']})
+            raise serializers.ValidationError(
+                {'tags': ['Тэг отсутствует в БД.']})
+    return data
+
+
+def validate_ingredients(data):
+    if not data:
+        raise serializers.ValidationError(
+            {'ingredients': ['Обязательное поле.']})
     return data
