@@ -4,7 +4,7 @@ from datetime import timedelta
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-SECRET_KEY = 'os6ps4jexq!ai$v+sg3g)xrh#=lazutk4otj%sn8pb^##@@fpi'
+SECRET_KEY = os.getenv('SECRET_KEY', default='SECRET_KEY')
 
 DEBUG = True
 
@@ -25,12 +25,12 @@ INSTALLED_APPS = [
     'django_filters',
     'colorfield',
 
-    'api',
-    'core',
-    'users',
-    'tags',
-    'recipes',
-    'ingredients',
+    'api.apps.AppApiConfig',
+    'core.apps.AppCoreConfig',
+    'users.apps.AppUsersConfig',
+    'tags.apps.AppTagsConfig',
+    'recipes.apps.AppRecipesConfig',
+    'ingredients.apps.AppIngredientsConfig',
 ]
 
 MIDDLEWARE = [
@@ -89,9 +89,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGE_CODE = 'ru'
+LANGUAGE_CODE = 'ru-RU'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
