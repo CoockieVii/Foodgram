@@ -41,5 +41,6 @@ class Subscription(models.Model):
             models.UniqueConstraint(fields=['user', 'author'],
                                     name='unique_subscription')]
 
-    def __str__(self):
-        return f'{self.user} подписан на {self.author}'
+    def clean(self):
+        if self.user == self.author:
+            raise ValueError('Нельзя подписываться на самого себя.')
