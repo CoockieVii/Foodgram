@@ -1,5 +1,5 @@
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator
 
 from ingredients.models import Ingredient
 from tags.models import Tag
@@ -21,8 +21,7 @@ class Recipe(models.Model):
                               upload_to='recipes/image/')
     text = models.TextField(verbose_name='Описание')
     cooking_time = models.IntegerField(verbose_name='Время приготовления',
-                                       validators=[MinValueValidator(1),
-                                                   MaxValueValidator(99)])
+                                       validators=[MinValueValidator(1)])
 
     class Meta:
         verbose_name = 'Рецепт'
@@ -95,6 +94,8 @@ class ShoppingCart(models.Model):
                                related_name='shoppingcart')
 
     class Meta:
+        verbose_name = 'Корзина покупок'
+        verbose_name_plural = 'Корзины покупок'
         constraints = [models.UniqueConstraint(fields=['recipe', 'user'],
                                                name='unique_shoppingcart')]
 

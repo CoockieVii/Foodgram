@@ -1,4 +1,3 @@
-from django.http.response import HttpResponse
 from django.db.models import Sum
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
@@ -9,6 +8,7 @@ from rest_framework.response import Response
 
 from core.filters import RecipeFilter
 from core.permissions import AuthorOrReadOnly
+from core.utils import download
 from core.validaters import ValidateTags
 from recipes.models import Favorite
 from recipes.models import Recipe
@@ -71,20 +71,7 @@ class RecipeViewSet(ValidateTags, viewsets.ModelViewSet):
     def download_cart(self, request):
         ingredients = RecipeIngredientRelations.objects.filter(
             recipe__shoppingcart__user=request.user
-        ).values(
-            'ingredients__name', 'ingredients__measurement_unit'
-        ).order_by(
-            'ingredients__name'
-        ).annotate(ingredient_total=Sum('amount'))
-        lines = ['  Ингредиенты: ']
-        for ing in ingredients:
-            name = ing['ingredients__name']
-            measurement_unit = ing['ingredients__measurement_unit']
-            amount = ing['ingredient_total']
-            lines.append(f'{name} ({measurement_unit}) - {amount}')
-        content = '\n'.join(lines)
-        content_type = 'text/plain,charset=utf8'
-        response = HttpResponse(content, content_type=content_type)
-        response[
-            'Content-Disposition'] = f'attachment; filename=shopping_list.txt'
-        return response
+        ).values('ingredients__name', 'ingredients__measurement_unit'
+                 ).order_by('ingredients__name'
+                            ).annotate(ingredient_total=Sum('amount'))
+        download(ingredients)

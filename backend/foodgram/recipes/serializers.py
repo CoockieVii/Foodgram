@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
 from core.mixins import AttributesForRecipe
+from core.validaters import validate_ingredients
 from core.validaters import validate_tags
 from ingredients.models import Ingredient
 from recipes.models import Recipe, RecipeIngredientRelations
@@ -37,12 +38,12 @@ class RecipeSerializer(AttributesForRecipe, SimpleRecipeSerializer):
     ingredients = RecipeIngredientRelationsSerializer(
         read_only=True, many=True, source='recipeingredientrelations')
     is_favorited = serializers.SerializerMethodField()
-    is_in_shopping_cart = serializers.SerializerMethodField()
+    is_shopping_cart = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipe
         fields = ('id', 'tags', 'author', 'ingredients', 'is_favorited',
-                  'is_in_shopping_cart', 'name', 'image', 'text',
+                  'is_shopping_cart', 'name', 'image', 'text',
                   'cooking_time')
 
     def get_recipes(self, data):
@@ -53,29 +54,35 @@ class RecipeSerializer(AttributesForRecipe, SimpleRecipeSerializer):
         return serializer.to_representation(recipes)
 
     def create_ingredient_amount(self, valid_ingredients, recipe):
-        for ingredient_data in valid_ingredients:
-            ingredient = get_object_or_404(
-                Ingredient, id=ingredient_data.get('id'))
-            RecipeIngredientRelations.objects.create(
-                recipe=recipe,
-                ingredients=ingredient,
-                amount=ingredient_data.get('amount'))
-
-    def create_tags(self, data, recipe):
-        valid_tags = validate_tags(data.get('tags'))
-        tags = Tag.objects.filter(id__in=valid_tags)
-        recipe.tags.set(tags)
+        objects = []
+        for data in valid_ingredients:
+            amount = data.get('amount')
+            ingredients = get_object_or_404(Ingredient, id=data['id'])
+            objects.append(RecipeIngredientRelations(recipe=recipe,
+                                                     ingredients=ingredients,
+                                                     amount=amount))
+        RecipeIngredientRelations.objects.bulk_create(objects)
 
     def create(self, validated_data):
-        valid_ingredients = validated_data.pop('ingredients')
+        pop_ingredients = validated_data.pop('ingredients')
+        pop_tags = validated_data.pop('tags')
+
         recipe = Recipe.objects.create(**validated_data)
-        self.create_tags(self.initial_data, recipe)
-        self.create_ingredient_amount(valid_ingredients, recipe)
+
+        tags = Tag.objects.filter(id__in=pop_tags)
+        recipe.tags.set(tags)
+
+        self.create_ingredient_amount(pop_ingredients, recipe)
         return recipe
 
     def validate(self, data):
-        ingredients = self.initial_data.get('ingredients')
-        data['ingredients'] = ingredients
+        get_ingredients = self.initial_data.get('ingredients')
+        validated_ingredients = validate_ingredients(get_ingredients)
+        data['ingredients'] = validated_ingredients
+
+        get_tags = self.initial_data.get('tags')
+        validated_tags = validate_tags(get_tags)
+        data['tags'] = validated_tags
         return data
 
     def update(self, instance, validated_data):
