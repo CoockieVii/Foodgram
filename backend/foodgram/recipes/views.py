@@ -74,4 +74,4 @@ class RecipeViewSet(ValidateTags, viewsets.ModelViewSet):
         ).values('ingredients__name', 'ingredients__measurement_unit'
                  ).order_by('ingredients__name'
                             ).annotate(ingredient_total=Sum('amount'))
-        download(ingredients)
+        return download(ingredients)
