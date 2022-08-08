@@ -46,13 +46,6 @@ class RecipeSerializer(AttributesForRecipe, SimpleRecipeSerializer):
                   'is_shopping_cart', 'name', 'image', 'text',
                   'cooking_time')
 
-    def get_recipes(self, data):
-        recipes_limit = self.context.get('request').GET.get('recipes_limit')
-        recipes = (data.recipes.all()[
-                   :int(recipes_limit)] if recipes_limit else data.recipes)
-        serializer = serializers.ListSerializer(child=RecipeSerializer())
-        return serializer.to_representation(recipes)
-
     def create_ingredient_amount(self, valid_ingredients, recipe):
         objects = []
         for data in valid_ingredients:

@@ -23,6 +23,14 @@ class GetRecipe:
             queryset, read_only=True, many=True)
         return serializer.data
 
+    # def get_recipes(self, data):
+    #     recipes_limit = self.context.get('request').GET.get('recipes_limit')
+    #     recipes = (data.recipes.all()[
+    #                :int(recipes_limit)] if recipes_limit else data.recipes)
+    #     serializer = serializers.ListSerializer(
+    #         child=serializers.RecipeSerializer())
+    #     return serializer.to_representation(recipes)
+
 
 class GetSubscribed:
     def get_is_subscribed(self, obj):
@@ -54,7 +62,7 @@ class GetShoppingCart:
             user=user_id, recipe=obj.id).exists()
 
 
-class AttributesForRecipe(GetFavorites, GetShoppingCart):
+class AttributesForRecipe(GetRecipe, GetFavorites, GetShoppingCart):
     pass
 
 
