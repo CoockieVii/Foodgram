@@ -65,11 +65,11 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
         author = get_object_or_404(User, id=author_id)
         validate = validate_subscription(author, request.user)
         if validate:
-            return Response(data=validate['data'], status=validate['status'])
-        if Subscription.objects.create(
-                user=request.user,
-                author=author):
-            return Response(status=status.HTTP_201_CREATED)
+            return Response(data=validate['errors'], status=validate['status'])
+        if Subscription.objects.create(user=request.user, author=author):
+            serializer = self.get_serializer(request.user)
+            return Response(data=serializer.data,
+                            status=status.HTTP_201_CREATED)
 
     def subscriptions(self, request):
         objects = Subscription.objects.filter(user=request.user)
@@ -85,6 +85,8 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
     def delete(self, request, *args, **kwargs):
         author_id = self.kwargs['users_id']
         user_id = request.user.id
-        if get_object_or_404(Subscription, user__id=user_id,
-                             author__id=author_id).delete():
+        if get_object_or_404(
+                Subscription,
+                user__id=user_id,
+                author__id=author_id).delete():
             return Response(status=status.HTTP_204_NO_CONTENT)
