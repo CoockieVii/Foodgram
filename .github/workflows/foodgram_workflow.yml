@@ -37,7 +37,7 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
             sudo docker-compose stop
-            sudo docker-compose rm backend
+            sudo docker system prune
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/backend:latest
             rm .env
             touch .env
