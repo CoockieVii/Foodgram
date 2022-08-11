@@ -106,22 +106,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.User'
 
-# Добавил чтобы фиксить undefined который вместо id.
-# (Не помогло)
-DJOSER = {
-    'LOGIN_FIELD': 'email',
-    'HIDE_USERS': False,
-    'SERIALIZERS': {
-        'user_create': 'users.serializers.CreateUserSerializer',
-        'user': 'users.serializers.UserSerializer',
-        'current_user': 'users.serializers.UserSerializer',
-    },
-    'PERMISSIONS': {
-        'user': ('rest_framework.permissions.IsAuthenticated',),
-        'user_list': ('rest_framework.permissions.AllowAny',)
-    }
-}
-
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
