@@ -3,8 +3,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
 from core.mixins import AttributesForRecipe
-from core.validaters import validate_ingredients
-from core.validaters import validate_tags
+from core.validaters import validate_ingredients, validate_tags
 from ingredients.models import Ingredient
 from recipes.models import Recipe, RecipeIngredientRelations
 from tags.models import Tag

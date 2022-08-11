@@ -1,9 +1,14 @@
 from django_filters import ModelMultipleChoiceFilter
 from django_filters.rest_framework import FilterSet, filters
+from rest_framework import filters as rf_filters
 
 from recipes.models import Recipe
 from tags.models import Tag
 from users.models import User
+
+
+class CustomSearchFilter(rf_filters.SearchFilter):
+    search_param = 'name'
 
 
 class RecipeFilter(FilterSet):
