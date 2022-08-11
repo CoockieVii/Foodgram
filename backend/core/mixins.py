@@ -23,6 +23,7 @@ class GetRecipe:
             queryset, read_only=True, many=True)
         return serializer.data
 
+
 class GetSubscribed:
     def get_is_subscribed(self, obj):
         user = self.context.get('request').user
@@ -32,8 +33,8 @@ class GetSubscribed:
 
 class GetFavorites:
     def get_is_favorited(self, obj):
-        user_id = self.context.get('request').user.id
-        return Favorite.objects.filter(user=user_id, recipe=obj.id).exists()
+        user = self.context.get('request').user
+        return Favorite.objects.filter(user=user, recipe=obj).exists()
 
 
 class GetIngradients:
