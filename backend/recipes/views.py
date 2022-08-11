@@ -1,7 +1,6 @@
 from django.db.models import Sum
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status
-from rest_framework import viewsets
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
@@ -10,12 +9,9 @@ from core.filters import RecipeFilter
 from core.permissions import AuthorOrReadOnly
 from core.utils import download
 from core.validaters import ValidateTags
-from recipes.models import Favorite
-from recipes.models import Recipe
-from recipes.models import RecipeIngredientRelations
-from recipes.models import ShoppingCart
-from recipes.serializers import RecipeSerializer
-from recipes.serializers import SimpleRecipeSerializer
+from recipes.models import (Favorite, Recipe, RecipeIngredientRelations,
+                            ShoppingCart)
+from recipes.serializers import RecipeSerializer, SimpleRecipeSerializer
 
 
 def custom_adder(model, user, pk):
@@ -39,28 +35,28 @@ def custom_deleter(model, user, pk):
 class RecipeViewSet(ValidateTags, viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
-    permission_classes = [AuthorOrReadOnly]
-    filter_backends = [DjangoFilterBackend]
-    filter_class = RecipeFilter
+    permission_classes = (AuthorOrReadOnly,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = RecipeFilter
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
-    @action(methods=['post', 'delete'], detail=True, url_path='favorite',
+    @action(methods=['get', 'delete'], detail=True, url_path='favorite',
             url_name='favorite')
     def favorite(self, request, pk=None):
         user = request.user
-        if request.method == 'POST':
+        if request.method == 'GET':
             return custom_adder(Favorite, user, pk)
         if request.method == 'DELETE':
             return custom_deleter(Favorite, user, pk)
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-    @action(methods=['post', 'delete'], detail=True, url_path='shopping_cart',
+    @action(methods=['get', 'delete'], detail=True, url_path='shopping_cart',
             url_name='shopping_cart')
     def shopping_cart(self, request, pk=None):
         user = request.user
-        if request.method == 'POST':
+        if request.method == 'GET':
             return custom_adder(ShoppingCart, user, pk)
         if request.method == 'DELETE':
             return custom_deleter(ShoppingCart, user, pk)

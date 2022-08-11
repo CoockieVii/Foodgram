@@ -6,10 +6,12 @@ from reportlab.pdfbase.ttfonts import TTFont
 
 def download(ingredients):
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="file.pdf"'
+    response['Content-Disposition'] = ('attachment; '
+                                       'filename="shopping_list.pdf"')
     p = canvas.Canvas(response)
-    pdfmetrics.registerFont(TTFont('FreeSans', 'FreeSans.ttf'))
-    p.setFont("FreeSans", 20)
+    pdfmetrics.registerFont(
+        TTFont('Roboto-ThinItalic', 'Roboto-ThinItalic.ttf'))
+    p.setFont("Roboto-ThinItalic", 20)
     WIDTH = 60
     HEIGHT = 770
     p.drawString(WIDTH, HEIGHT, '  Ингредиенты: ')
@@ -18,7 +20,7 @@ def download(ingredients):
         name = add_new_string['ingredients__name']
         measurement_unit = add_new_string['ingredients__measurement_unit']
         amount = add_new_string['ingredient_total']
-        string = f'{name}({measurement_unit}) - {amount} шт.'
+        string = f'{name}  -  {amount}({measurement_unit})'
         p.drawString(WIDTH, HEIGHT, string)
     p.showPage()
     p.save()
