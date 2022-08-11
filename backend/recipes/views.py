@@ -16,11 +16,13 @@ from recipes.serializers import RecipeSerializer, SimpleRecipeSerializer
 
 def custom_adder(model, user, pk):
     recipe = get_object_or_404(Recipe, pk=pk)
-    if not model.objects.filter(user=user, recipe=recipe).exists():
+    test = model.objects.filter(user=user, recipe=recipe).exists()
+    if not test:
         model.objects.create(user=user, recipe=recipe)
         serializer = SimpleRecipeSerializer(recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(status=status.HTTP_400_BAD_REQUEST)
+    return Response({'error': 'Запись уже существует.'},
+                    status=status.HTTP_400_BAD_REQUEST)
 
 
 def custom_deleter(model, user, pk):
@@ -29,7 +31,8 @@ def custom_deleter(model, user, pk):
     if model.exists():
         model.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    return Response(status=status.HTTP_400_BAD_REQUEST)
+    return Response({'error': 'Запись уже была удалена.'},
+                    status=status.HTTP_400_BAD_REQUEST)
 
 
 class RecipeViewSet(ValidateTags, viewsets.ModelViewSet):
