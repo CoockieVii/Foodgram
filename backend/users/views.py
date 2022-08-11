@@ -58,7 +58,7 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.AllowAny]
 
     def get_queryset(self):
-        return get_list_or_404(User, subscriber__user=self.request.user)
+        return get_list_or_404(User, author__user=self.request.user)
 
     def create(self, request, *args, **kwargs):
         author_id = self.kwargs['users_id']

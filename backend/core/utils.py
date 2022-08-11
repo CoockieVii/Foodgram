@@ -20,7 +20,7 @@ def download(ingredients):
         name = add_new_string['ingredients__name']
         measurement_unit = add_new_string['ingredients__measurement_unit']
         amount = add_new_string['ingredient_total']
-        string = f'{name}({measurement_unit}) - {amount} шт.'
+        string = f'{name}  -  {amount}({measurement_unit})'
         p.drawString(WIDTH, HEIGHT, string)
     p.showPage()
     p.save()
