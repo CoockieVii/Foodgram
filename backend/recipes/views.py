@@ -46,21 +46,21 @@ class RecipeViewSet(ValidateTags, viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
-    @action(methods=['post', 'delete'], detail=True, url_path='favorite',
+    @action(methods=['get', 'delete'], detail=True, url_path='favorite',
             url_name='favorite')
     def favorite(self, request, pk=None):
         user = request.user
-        if request.method == 'POST':
+        if request.method == 'GET':
             return custom_adder(Favorite, user, pk)
         if request.method == 'DELETE':
             return custom_deleter(Favorite, user, pk)
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-    @action(methods=['post', 'delete'], detail=True, url_path='shopping_cart',
+    @action(methods=['get', 'delete'], detail=True, url_path='shopping_cart',
             url_name='shopping_cart')
     def shopping_cart(self, request, pk=None):
         user = request.user
-        if request.method == 'POST':
+        if request.method == 'GET':
             return custom_adder(ShoppingCart, user, pk)
         if request.method == 'DELETE':
             return custom_deleter(ShoppingCart, user, pk)

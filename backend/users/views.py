@@ -55,7 +55,7 @@ class UserViewSet(CreateListRetrieveViewSet):
 
 class SubscriptionViewSet(viewsets.ModelViewSet):
     serializer_class = SubscriptionSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
     def get_queryset(self):
         return get_list_or_404(User, subscriber__user=self.request.user)
@@ -70,17 +70,6 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(request.user)
             return Response(data=serializer.data,
                             status=status.HTTP_201_CREATED)
-
-    def subscriptions(self, request):
-        objects = Subscription.objects.filter(user=request.user)
-        if not objects:
-            return Response(status=status.HTTP_200_OK)
-        page = self.paginate_queryset(objects)
-        if page:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-        serializer = self.get_serializer(objects, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def delete(self, request, *args, **kwargs):
         author_id = self.kwargs['users_id']
