@@ -34,6 +34,8 @@ class GetSubscribed:
 class GetFavorites:
     def get_is_favorited(self, obj):
         user = self.context.get('request').user
+        if user.is_anonymous:
+            return False
         return Favorite.objects.filter(user=user, recipe=obj).exists()
 
 
