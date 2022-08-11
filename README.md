@@ -1,5 +1,58 @@
 http://84.201.154.166/recipes
 
-Я разочарован....
-С POSTMAN приходят правильные респонсы, но на фронте почти все не работает. Все не так....
-Если из браузера взять урлы, которые на фронте показывают как 404 и стучаться по ним же через постман все отлично все работает....
+# Foodgram - продуктовый помощник.
+
+На этом сервисе пользователи могут публиковать рецепты, подписываться на публикации других пользователей, добавлять понравившиеся рецепты в список «Избранное», а перед походом в магазин скачивать сводный список продуктов, необходимых для приготовления одного или нескольких выбранных блюд.
+
+## Шаблон наполнения env-файла:
+
+``` DB_ENGINE=django.db.backends.postgresql # указываем, что работаем с postgresql ```
+
+``` DB_NAME=postgres # имя базы данных ```
+
+``` POSTGRES_USER=postgres # логин для подключения к базе данных ```
+
+``` POSTGRES_PASSWORD=postgres # пароль для подключения к БД (установите свой) ```
+
+``` DB_HOST=db # название сервиса (контейнера) ```
+
+``` DB_PORT=5432 # порт для подключения к БД ```
+
+``` SECRET_KEY='' # секретный ключ Django ```
+
+``` DEBUG=True/False # Включить/отключить режим отладки ```
+
+
+## Стэк технологий:
+  Python, django, drf, psycopg2-binary, djoser, gunicorn, nginx.
+
+## Установка:
+* Зайдите на ваш удаленный сервер;
+* Клонируйте репозиторий себе на удаленный сервер:
+
+  ``` git clone git@github.com:CoockieVii/foodgram-project-react.git ```
+* Установите docker и docker-compose согласно официальной инструкции (в зависимости от операционной системы сервера):
+    https://docs.docker.com/engine/install/    
+    https://docs.docker.com/compose/install/
+* Перейдите в папку infra репозитория с помощью команды ;
+ ``` cd infra ```
+* Создайте файл .env - в нем укажите переменные окружающей среды согласно шаблону выше;
+
+* Запустите приложения в контейнерах: 
+  ``` docker-compose up -d --build ```
+  
+* Выполните миграцию в контейнерах: 
+
+  ``` docker-compose exec backend python manage.py makemigrations ```
+  
+  ``` docker-compose exec backend python manage.py migrate ```
+* Создайте суперпользователя Django:
+
+  ``` docker-compose exec backend python manage.py createsuperuser ```
+* Соберите статику:
+
+  ``` docker-compose exec backend python manage.py collectstatic --no-input ```
+* Загрузите предустановленный список ингредиентов в базу данных:
+  ``` docker-compose exec backend python manage.py load_ingredients ```
+* 
+* Проект будет доступен по публичному IP сервера;
