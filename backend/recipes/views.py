@@ -6,6 +6,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from core.filters import RecipeFilter
+from core.paginations import CustomPagination
 from core.permissions import IsOwnerOrReadOnly
 from core.utils import download
 from core.validaters import ValidateTags
@@ -37,6 +38,7 @@ def custom_deleter(model, user, pk):
 class RecipeViewSet(ValidateTags, viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
+    pagination_class = CustomPagination
     permission_classes = (IsOwnerOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
