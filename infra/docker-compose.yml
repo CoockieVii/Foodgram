@@ -24,7 +24,7 @@ services:
       - ./.env
 
   frontend:
-    image: ilmir7774/foodgram_frontend
+    build: ../frontend
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:

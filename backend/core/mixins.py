@@ -18,7 +18,7 @@ class GetRecipe:
                 author=obj)[:recipe_limit]
         else:
             queryset = Recipe.objects.filter(
-                author=obj)
+                author_id=obj.id)
         serializer = serializers.SimpleRecipeSerializer(
             queryset, read_only=True, many=True)
         return serializer.data
@@ -28,7 +28,7 @@ class GetSubscribed:
     def get_is_subscribed(self, obj):
         user = self.context.get('request').user
         return user.is_authenticated and Subscription.objects.filter(
-            author=obj, user=user).exists()
+            author_id=obj.id, user_id=user.id).exists()
 
 
 class GetFavorites:
@@ -36,24 +36,25 @@ class GetFavorites:
         user = self.context.get('request').user
         if user.is_anonymous:
             return False
-        return Favorite.objects.filter(user=user, recipe=obj).exists()
+        return Favorite.objects.filter(user_id=user.id,
+                                       recipe_id=obj.id).exists()
 
 
 class GetIngradients:
     def get_ingradients(self, obj):
-        return RecipeIngredientRelations.objects.filter(recipe=obj)
+        return RecipeIngredientRelations.objects.filter(recipe_id=obj.id)
 
 
 class GetTags:
     def get_tags(self, obj):
-        return RecipeTag.objects.filter(recipe=obj)
+        return RecipeTag.objects.filter(recipe_id=obj.id)
 
 
 class GetShoppingCart:
     def get_is_shopping_cart(self, obj):
-        user_id = self.context.get('request').user.id
+        user = self.context.get('request').user
         return ShoppingCart.objects.filter(
-            user=user_id, recipe=obj.id).exists()
+            user_id=user.id, recipe_id=obj.id).exists()
 
 
 class AttributesForRecipe(GetRecipe, GetFavorites, GetShoppingCart):
