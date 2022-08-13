@@ -46,6 +46,7 @@ class RecipeViewSet(ValidateTags, viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
+
     @action(methods=['post', 'delete'], detail=True, url_path='favorite',
             url_name='favorite')
     def favorite(self, request, pk=None):
