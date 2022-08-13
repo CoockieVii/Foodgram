@@ -1,9 +1,14 @@
 from django_filters import ModelMultipleChoiceFilter
 from django_filters.rest_framework import FilterSet, filters
+from rest_framework import filters as rf_filters
 
 from recipes.models import Recipe
 from tags.models import Tag
 from users.models import User
+
+
+class CustomSearchFilter(rf_filters.SearchFilter):
+    search_param = 'name'
 
 
 class RecipeFilter(FilterSet):
@@ -16,12 +21,12 @@ class RecipeFilter(FilterSet):
 
     def get_is_favorited(self, queryset, name, value):
         if value:
-            return queryset.filter(favorite__user=self.request.user)
+            return queryset.filter(favorite__user__id=self.request.user.id)
         return queryset
 
     def get_is_shopping_cart(self, queryset, name, value):
         if value:
-            return queryset.filter(shoppingcart__user=self.request.user)
+            return queryset.filter(shoppingcart__user__id=self.request.user.id)
         return queryset
 
     class Meta:

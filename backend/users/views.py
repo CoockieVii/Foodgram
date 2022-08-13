@@ -55,36 +55,27 @@ class UserViewSet(CreateListRetrieveViewSet):
 
 class SubscriptionViewSet(viewsets.ModelViewSet):
     serializer_class = SubscriptionSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
     def get_queryset(self):
-        return get_list_or_404(User, subscriber__user=self.request.user)
+        return get_list_or_404(User, author__user__id=self.request.user.id)
 
     def create(self, request, *args, **kwargs):
         author_id = self.kwargs['users_id']
         author = get_object_or_404(User, id=author_id)
         validate = validate_subscription(author, request.user)
         if validate:
-            return Response(data=validate['data'], status=validate['status'])
-        if Subscription.objects.create(
-                user=request.user,
-                author=author):
-            return Response(status=status.HTTP_201_CREATED)
-
-    def subscriptions(self, request):
-        objects = Subscription.objects.filter(user=request.user)
-        if not objects:
-            return Response(status=status.HTTP_200_OK)
-        page = self.paginate_queryset(objects)
-        if page:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-        serializer = self.get_serializer(objects, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(data=validate['errors'], status=validate['status'])
+        if Subscription.objects.create(user=request.user, author=author):
+            serializer = self.get_serializer(request.user)
+            return Response(data=serializer.data,
+                            status=status.HTTP_201_CREATED)
 
     def delete(self, request, *args, **kwargs):
         author_id = self.kwargs['users_id']
         user_id = request.user.id
-        if get_object_or_404(Subscription, user__id=user_id,
-                             author__id=author_id).delete():
+        if get_object_or_404(
+                Subscription,
+                user__id=user_id,
+                author__id=author_id).delete():
             return Response(status=status.HTTP_204_NO_CONTENT)

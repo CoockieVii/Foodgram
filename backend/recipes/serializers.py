@@ -3,8 +3,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
 from core.mixins import AttributesForRecipe
-from core.validaters import validate_ingredients
-from core.validaters import validate_tags
+from core.validaters import validate_ingredients, validate_tags
 from ingredients.models import Ingredient
 from recipes.models import Recipe, RecipeIngredientRelations
 from tags.models import Tag
@@ -38,12 +37,12 @@ class RecipeSerializer(AttributesForRecipe, SimpleRecipeSerializer):
     ingredients = RecipeIngredientRelationsSerializer(
         read_only=True, many=True, source='recipeingredientrelations')
     is_favorited = serializers.SerializerMethodField()
-    is_shopping_cart = serializers.SerializerMethodField()
+    is_in_shopping_cart = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipe
         fields = ('id', 'tags', 'author', 'ingredients', 'is_favorited',
-                  'is_shopping_cart', 'name', 'image', 'text',
+                  'is_in_shopping_cart', 'name', 'image', 'text',
                   'cooking_time')
 
     def create_ingredient_amount(self, valid_ingredients, recipe):
@@ -84,11 +83,15 @@ class RecipeSerializer(AttributesForRecipe, SimpleRecipeSerializer):
         instance.text = validated_data.get('text', instance.text)
         instance.cooking_time = validated_data.get(
             'cooking_time', instance.cooking_time)
-        instance.save()
-        instance.tags.remove()
-        self.create_tags(self.initial_data, instance)
-        instance.ingredientamount_set.filter(recipe__in=[instance.id]).delete()
-        valid_ingredients = validated_data.get(
-            'ingredients', instance.ingredients)
+
+        instance.tags.clear()
+        tags_data = self.initial_data.get('tags')
+        instance.tags.set(tags_data)
+        RecipeIngredientRelations.objects.filter(
+            recipe=instance).all().delete()
+
+        valid_ingredients = validated_data.get('ingredients',
+                                               instance.ingredients)
         self.create_ingredient_amount(valid_ingredients, instance)
+        instance.save()
         return instance
