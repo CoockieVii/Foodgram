@@ -37,12 +37,12 @@ class RecipeSerializer(AttributesForRecipe, SimpleRecipeSerializer):
     ingredients = RecipeIngredientRelationsSerializer(
         read_only=True, many=True, source='recipeingredientrelations')
     is_favorited = serializers.SerializerMethodField()
-    is_shopping_cart = serializers.SerializerMethodField()
+    is_in_shopping_cart = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipe
         fields = ('id', 'tags', 'author', 'ingredients', 'is_favorited',
-                  'is_shopping_cart', 'name', 'image', 'text',
+                  'is_in_shopping_cart', 'name', 'image', 'text',
                   'cooking_time')
 
     def create_ingredient_amount(self, valid_ingredients, recipe):
