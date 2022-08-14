@@ -1,20 +1,23 @@
 from django.shortcuts import get_list_or_404
 from djoser.serializers import SetPasswordSerializer
-from rest_framework import viewsets, status, permissions, mixins
+from rest_framework import mixins, permissions, status, viewsets
+from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
-from rest_framework.decorators import action
 
 from core.validaters import validate_subscription
-from .models import User, Subscription
-from .serializers import CreateUserSerializer
-from .serializers import SubscriptionSerializer
-from .serializers import UserSerializer
+
+from .models import Subscription, User
+from .serializers import (CreateUserSerializer, SubscriptionSerializer,
+                          UserSerializer)
 
 
-class CreateListRetrieveViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
-                                mixins.RetrieveModelMixin,
-                                viewsets.GenericViewSet):
+class CreateListRetrieveViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet,
+):
     pass
 
 
@@ -24,16 +27,16 @@ class UserViewSet(CreateListRetrieveViewSet):
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_permissions(self):
-        if self.action in ('create', 'list'):
+        if self.action in ("create", "list"):
             return [permissions.AllowAny()]
         return super().get_permissions()
 
     def get_serializer_class(self):
-        if self.action == 'create':
+        if self.action == "create":
             return CreateUserSerializer
-        if self.action == 'set_password':
+        if self.action == "set_password":
             return SetPasswordSerializer
-        if self.action in ('subscribe', 'subscriptions'):
+        if self.action in ("subscribe", "subscriptions"):
             return SubscriptionSerializer
         return UserSerializer
 
@@ -43,12 +46,13 @@ class UserViewSet(CreateListRetrieveViewSet):
         serializer = self.get_serializer(user)
         return Response(serializer.data)
 
-    @action(methods=('POST',), detail=False)
+    @action(methods=("POST",), detail=False)
     def set_password(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.request.user.set_password(
-            serializer.validated_data['new_password'])
+            serializer.validated_data["new_password"]
+        )
         self.request.user.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -61,21 +65,19 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
         return get_list_or_404(User, author__user__id=self.request.user.id)
 
     def create(self, request, *args, **kwargs):
-        author_id = self.kwargs['users_id']
+        author_id = self.kwargs["users_id"]
         author = get_object_or_404(User, id=author_id)
         validate = validate_subscription(author, request.user)
         if validate:
-            return Response(data=validate['errors'], status=validate['status'])
-        if Subscription.objects.create(user=request.user, author=author):
-            serializer = self.get_serializer(request.user)
-            return Response(data=serializer.data,
-                            status=status.HTTP_201_CREATED)
+            return Response(data=validate["errors"], status=validate["status"])
+        Subscription.objects.create(user=request.user, author=author)
+        serializer = self.get_serializer(request.user)
+        return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
     def delete(self, request, *args, **kwargs):
-        author_id = self.kwargs['users_id']
+        author_id = self.kwargs["users_id"]
         user_id = request.user.id
-        if get_object_or_404(
-                Subscription,
-                user__id=user_id,
-                author__id=author_id).delete():
-            return Response(status=status.HTTP_204_NO_CONTENT)
+        get_object_or_404(
+            Subscription, user__id=user_id, author__id=author_id
+        ).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

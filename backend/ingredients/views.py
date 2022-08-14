@@ -1,9 +1,10 @@
-from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.permissions import AllowAny
+from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from core.filters import CustomSearchFilter
 from ingredients.models import Ingredient
 from ingredients.serializers import IngredientSerializer
+
 
 class IngredientViewSet(ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
@@ -11,4 +12,4 @@ class IngredientViewSet(ReadOnlyModelViewSet):
     pagination_class = None
     permission_classes = (AllowAny,)
     filter_backends = (CustomSearchFilter,)
-    search_fields = ('^name',)
+    search_fields = ("^name",)

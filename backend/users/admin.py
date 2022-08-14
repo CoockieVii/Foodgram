@@ -1,19 +1,19 @@
 from django.contrib import admin
 
-from .models import User, Subscription
+from .models import Subscription, User
 
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ['id', 'username', 'email', 'password']
+    list_display = ["id", "username", "email", "password"]
     actions_on_bottom = True
-    search_fields = ['username', 'email']
-    empty_value_display = '-пусто-'
+    search_fields = ["username", "email"]
+    empty_value_display = "-пусто-"
 
 
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
-    list_display = ['user', 'author', 'created']
+    list_display = ["user", "author", "created"]
     actions_on_bottom = True
-    search_fields = ['user', 'author']
-    empty_value_display = '-пусто-'
+    search_fields = ["user", "author"]
+    empty_value_display = "-пусто-"
