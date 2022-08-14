@@ -46,57 +46,60 @@ class RecipeViewSet(ValidateTags, viewsets.ModelViewSet):
     filterset_class = RecipeFilter
 
     def get_queryset(self):
-        result = Recipe.objects.select_related(
-            'author'
-        ).prefetch_related(
-            'recipeingredientrelations__ingredients'
-        ).all()
-        return result
-
-    def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
-
-    @action(
-        methods=["post", "delete"],
-        detail=True,
-        url_path="favorite",
-        url_name="favorite",
-    )
-    def favorite(self, request, pk=None):
-        user = request.user
-        if request.method == "POST":
-            return custom_adder(Favorite, user, pk)
-        if request.method == "DELETE":
-            return custom_deleter(Favorite, user, pk)
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
-    @action(
-        methods=["post", "delete"],
-        detail=True,
-        url_path="shopping_cart",
-        url_name="shopping_cart",
-    )
-    def shopping_cart(self, request, pk=None):
-        user = request.user
-        if request.method == "POST":
-            return custom_adder(ShoppingCart, user, pk)
-        if request.method == "DELETE":
-            return custom_deleter(ShoppingCart, user, pk)
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
-    @action(
-        methods=["get"],
-        detail=False,
-        url_path="download_shopping_cart",
-        url_name="download_shopping_cart",
-    )
-    def download_cart(self, request):
-        ingredients = (
-            RecipeIngredientRelations.objects.filter(
-                recipe__shoppingcart__user_id=request.user.id
-            )
-            .values("ingredients__name", "ingredients__measurement_unit")
-            .order_by("ingredients__name")
-            .annotate(ingredient_total=Sum("amount"))
+        return (
+            Recipe.objects.select_related("author")
+            .prefetch_related("recipeingredientrelations__ingredients")
+            .all()
         )
-        return download(ingredients)
+
+
+def perform_create(self, serializer):
+    serializer.save(author=self.request.user)
+
+
+@action(
+    methods=["post", "delete"],
+    detail=True,
+    url_path="favorite",
+    url_name="favorite",
+)
+def favorite(self, request, pk=None):
+    user = request.user
+    if request.method == "POST":
+        return custom_adder(Favorite, user, pk)
+    if request.method == "DELETE":
+        return custom_deleter(Favorite, user, pk)
+    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+@action(
+    methods=["post", "delete"],
+    detail=True,
+    url_path="shopping_cart",
+    url_name="shopping_cart",
+)
+def shopping_cart(self, request, pk=None):
+    user = request.user
+    if request.method == "POST":
+        return custom_adder(ShoppingCart, user, pk)
+    if request.method == "DELETE":
+        return custom_deleter(ShoppingCart, user, pk)
+    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+@action(
+    methods=["get"],
+    detail=False,
+    url_path="download_shopping_cart",
+    url_name="download_shopping_cart",
+)
+def download_cart(self, request):
+    ingredients = (
+        RecipeIngredientRelations.objects.filter(
+            recipe__shoppingcart__user_id=request.user.id
+        )
+        .values("ingredients__name", "ingredients__measurement_unit")
+        .order_by("ingredients__name")
+        .annotate(ingredient_total=Sum("amount"))
+    )
+    return download(ingredients)
