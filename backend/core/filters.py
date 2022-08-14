@@ -8,16 +8,18 @@ from users.models import User
 
 
 class CustomSearchFilter(rf_filters.SearchFilter):
-    search_param = 'name'
+    search_param = "name"
 
 
 class RecipeFilter(FilterSet):
-    tags = ModelMultipleChoiceFilter(field_name='tags__slug',
-                                     to_field_name='slug',
-                                     queryset=Tag.objects.all())
+    tags = ModelMultipleChoiceFilter(
+        field_name="tags__slug",
+        to_field_name="slug",
+        queryset=Tag.objects.all(),
+    )
     author = filters.ModelChoiceFilter(queryset=User.objects.all())
-    is_favorited = filters.BooleanFilter(method='get_is_favorited')
-    is_in_shopping_cart = filters.BooleanFilter(method='get_is_shopping_cart')
+    is_favorited = filters.BooleanFilter(method="get_is_favorited")
+    is_in_shopping_cart = filters.BooleanFilter(method="get_is_shopping_cart")
 
     def get_is_favorited(self, queryset, name, value):
         if value:
@@ -31,4 +33,4 @@ class RecipeFilter(FilterSet):
 
     class Meta:
         model = Recipe
-        fields = ('tags', 'author')
+        fields = ("tags", "author")
