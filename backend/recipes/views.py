@@ -39,12 +39,19 @@ def custom_deleter(model, user, pk):
 
 
 class RecipeViewSet(ValidateTags, viewsets.ModelViewSet):
-    queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     pagination_class = CustomPagination
     permission_classes = (IsOwnerOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
+
+    def get_queryset(self):
+        result = Recipe.objects.select_related(
+            'author'
+        ).prefetch_related(
+            'recipeingredientrelations__ingredients'
+        ).all()
+        return result
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
