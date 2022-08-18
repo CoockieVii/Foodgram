@@ -20,8 +20,6 @@ http://84.201.154.166/recipes
 
 ``` SECRET_KEY='' # секретный ключ Django ```
 
-``` DEBUG=True/False # Включить/отключить режим отладки ```
-
 
 ## Стэк технологий:
   Python, django, drf, psycopg2-binary, djoser, gunicorn, nginx.
