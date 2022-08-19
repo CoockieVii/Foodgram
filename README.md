@@ -36,7 +36,7 @@
 * Зайдите на ваш удаленный сервер;
 * Клонируйте репозиторий себе на удаленный сервер:
 
-  ``` git clone git@github.com:CoockieVii/foodgram-project-react.git ```
+  ``` git clone git@github.com:cookievii/foodgram-project-react.git ```
 * Установите docker и docker-compose согласно официальной инструкции (в зависимости от операционной системы сервера):
     https://docs.docker.com/engine/install/    
     https://docs.docker.com/compose/install/
@@ -65,9 +65,9 @@
 Авторы:
 ----------
 * **Валитов Ильмир Илсурович**
-GitHub - [CoockieVii](https://github.com/CoockieVii)
+GitHub - [cookievii](https://github.com/cookievii)
 ----------
 ### MIT License:
-#### Copyright (c) 2022 [CoockieVii](https://github.com/CoockieVii)
+#### Copyright (c) 2022 [cookievii](https://github.com/cookievii)
 
 ----------
