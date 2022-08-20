@@ -1,5 +1,5 @@
 # Проект Foodgram :pizza:
-![example workflow](https://github.com/cookievii/Foodgram/actions/workflows/main.yml/badge.svg)
+![example workflow](https://github.com/cookievii/Foodgram/actions/workflows/foodgram_workflow.yml/badge.svg)
 
 ----------
 
