@@ -40,19 +40,26 @@ Foodgram - продуктовый помощник. Здесь пользова�
 ```bash
 # - Зайдите на ваш удаленный сервер и скачайте:
 git clone git@github.com:cookievii/Foodgram.git
+
 # - Перейдите в папку infra репозитория с помощью команды ;
 cd infra/
+
 # - Создаем файл .env -файла(Шаблон наполнения показан ниже).
 touch .env
+
 # - Запустите приложения в контейнерах:
 docker-compose up -d --build
+
 # - Выполните миграцию в контейнерах:
 docker-compose exec backend python manage.py makemigrations
 docker-compose exec backend python manage.py migrate
+
 # - Создайте суперпользователя Django:
 docker-compose exec backend python manage.py createsuperuser
+
 # - Соберите статику:
 docker-compose exec backend python manage.py collectstatic --no-input
+
 # - Загрузите предустановленный список ингредиентов в базу данных:
 docker-compose exec backend python manage.py load_data
 ```
