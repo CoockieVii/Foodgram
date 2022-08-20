@@ -1,7 +1,9 @@
-Ссылка на развернутый проект: [ТУТ]( http://84.201.154.166/recipes)
+# Проект Foodgram :pizza:
+
 ----------
-## Стэк технологий:
-![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)
+
+### Стэк технологий:
+
 ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
 ![Django](https://img.shields.io/badge/django-%23092E20.svg?style=for-the-badge&logo=django&logoColor=white)
 ![DjangoREST](https://img.shields.io/badge/DJANGO-REST-ff1709?style=for-the-badge&logo=django&logoColor=white&color=ff1709&labelColor=gray)
@@ -11,63 +13,78 @@
 ![Gunicorn](https://img.shields.io/badge/gunicorn-%298729.svg?style=for-the-badge&logo=gunicorn&logoColor=white)
 ![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white)
 ![Git](https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white)
-----------
-# Foodgram - продуктовый помощник.
-
-На этом сервисе пользователи могут публиковать рецепты, подписываться на публикации других пользователей, добавлять понравившиеся рецепты в список «Избранное», а перед походом в магазин скачивать сводный список продуктов, необходимых для приготовления одного или нескольких выбранных блюд.
+![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white)
+![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)
 
 ----------
-## Шаблон наполнения env-файла:
 
-``` DB_ENGINE=django.db.backends.postgresql # указываем, что работаем с postgresql ```
+### Описание проекта
 
-``` DB_NAME=postgres # имя базы данных ```
-
-``` POSTGRES_USER=postgres # логин для подключения к базе данных ```
-
-``` POSTGRES_PASSWORD=postgres # пароль для подключения к БД (установите свой) ```
-
-``` DB_HOST=db # название сервиса (контейнера) ```
-
-``` DB_PORT=5432 # порт для подключения к БД ```
+Foodgram - продуктовый помощник. Здесь пользователи могут публиковать
+рецепты, подписываться на
+публикации других пользователей, добавлять понравившиеся рецепты в список
+«Избранное», а перед походом в магазин скачивать сводный список продуктов,
+необходимых для приготовления одного или нескольких выбранных блюд.
 
 ----------
-## Установка:
-* Зайдите на ваш удаленный сервер;
-* Клонируйте репозиторий себе на удаленный сервер:
 
-  ``` git clone git@github.com:cookievii/foodgram-project-react.git ```
-* Установите docker и docker-compose согласно официальной инструкции (в зависимости от операционной системы сервера):
-    https://docs.docker.com/engine/install/    
-    https://docs.docker.com/compose/install/
-* Перейдите в папку infra репозитория с помощью команды ;
- ``` cd infra ```
-* Создайте файл .env - в нем укажите переменные окружающей среды согласно шаблону выше;
+### Установка:
 
-* Запустите приложения в контейнерах: 
-  ``` docker-compose up -d --build ```
-  
-* Выполните миграцию в контейнерах: 
+Установите docker и docker-compose согласно официальной инструкции (
+взависимости от операционной системы сервера):
 
-  ``` docker-compose exec backend python manage.py makemigrations ```
-  
-  ``` docker-compose exec backend python manage.py migrate ```
-* Создайте суперпользователя Django:
+- https://docs.docker.com/engine/install/
+- https://docs.docker.com/compose/install/
 
-  ``` docker-compose exec backend python manage.py createsuperuser ```
-* Соберите статику:
-* 
-  ``` docker-compose exec backend python manage.py collectstatic --no-input ```
-* Загрузите предустановленный список ингредиентов в базу данных:
-  ``` docker-compose exec backend python manage.py load_ingredients ```
-* Проект будет доступен по публичному IP сервера;
+```bash
+# - Зайдите на ваш удаленный сервер и скачайте:
+git clone git@github.com:cookievii/Foodgram.git
+# - Перейдите в папку infra репозитория с помощью команды ;
+cd infra/
+# - Создаем файл .env -файла(Шаблон наполнения показан ниже).
+touch .env
+# - Запустите приложения в контейнерах:
+docker-compose up -d --build
+# - Выполните миграцию в контейнерах:
+docker-compose exec backend python manage.py makemigrations
+docker-compose exec backend python manage.py migrate
+# - Создайте суперпользователя Django:
+docker-compose exec backend python manage.py createsuperuser
+# - Соберите статику:
+docker-compose exec backend python manage.py collectstatic --no-input
+# - Загрузите предустановленный список ингредиентов в базу данных:
+docker-compose exec backend python manage.py load_data
+```
+
+### Шаблон наполнения .env -файла:
+
+```bash
+DB_ENGINE=django.db.backends.postgresql # указываем, что работаем с postgresql.
+DB_NAME=postgres # имя базы данных.
+POSTGRES_USER=postgres # логин для подключения к базе данных.
+POSTGRES_PASSWORD=postgres # пароль для подключения к БД (установите свой).
+DB_HOST=db # название сервиса (контейнера).
+DB_PORT=5432 # порт для подключения к БД.
+```
+
+### Документация с примерами запросов и ответов*
+
+###### *Доступна после запуска проекта
+
+Документация для API: [по ссылке](http://localhost:8000/redoc/)
+
+
 ----------
-Авторы:
-----------
+
+### Авторы:
+
 * **Валитов Ильмир Илсурович**
-GitHub - [cookievii](https://github.com/cookievii)
+  GitHub - [cookievii](https://github.com/cookievii)
+
 ----------
+
 ### MIT License:
-#### Copyright (c) 2022 [cookievii](https://github.com/cookievii)
+
+Copyright (c) 2022 [cookievii](https://github.com/cookievii)
 
 ----------
