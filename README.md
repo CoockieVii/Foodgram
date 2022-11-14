@@ -1,4 +1,4 @@
-# Проект Foodgram :pizza:
+# Продуктовый помощник :pizza:
 ![example workflow](https://github.com/cookievii/Foodgram/actions/workflows/foodgram_workflow.yml/badge.svg)
 
 ----------
